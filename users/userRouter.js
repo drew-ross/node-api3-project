@@ -1,21 +1,19 @@
 const express = require('express');
 
+const userDb = require('./userDb');
 const postRouter = require('../posts/postRouter');
 
 const router = express.Router();
 
-router.use('/:id/posts', (req, res, next) => {
-  req.userId = req.params.id;
-  next();
-}, postRouter);
+router.use('/:id/posts', validateUserId, postRouter);
 
 //users routes
 router.get('/', (req, res) => {
   res.send('Users');
 });
 
-router.get('/:id', (req, res) => {
-  res.send(`User id ${req.params.id}`);
+router.get('/:id', validateUserId, (req, res) => {
+  res.send(`User id ${req.user}`);
 });
 
 router.post('/', (req, res) => {
@@ -38,7 +36,17 @@ router.get('/:id/posts', (req, res) => {
 //custom middleware
 
 function validateUserId(req, res, next) {
-  // do your magic!
+  const userId = req.params.id;
+  userDb.getById(userId)
+    .then(userExists => {
+      if (userExists) {
+        req.user = userId;
+        next();
+      } else {
+        res.status(400).json({ message: 'invalid user id' });
+      }
+    })
+    .catch(err => res.status(500).json({ error: 'There was a server error.' }));
 }
 
 function validateUser(req, res, next) {
