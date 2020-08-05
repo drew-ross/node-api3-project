@@ -36,8 +36,6 @@ router.put('/:id', validateUserId, validateUser, (req, res) => {
     .catch(err => res.status(500).json({ errorMessage: 'There was a problem updating the user.', error: err }));
 });
 
-//posts routes
-
 
 //custom middleware
 
