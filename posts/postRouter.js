@@ -1,11 +1,12 @@
 const express = require('express');
 
 const postDb = require('./postDb');
+const userDb = require('../users/userDb');
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  postDb.getByUserId(req.user.id)
+  userDb.getUserPosts(req.user.id)
     .then(posts => res.status(200).json(posts))
     .catch(err => res.status(500).json({ errorMessage: 'There was a problem getting the posts.', error: err }));
 });
