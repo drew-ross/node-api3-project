@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 
 router.get('/:id', (req, res) => {
-  res.send(`User id ${req.user} Post id ${req.params.id}`);
+  res.send(`User id ${req.user.id} Post id ${req.params.id}`);
 });
 
 router.post('/', (req, res) => {

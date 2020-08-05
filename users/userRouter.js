@@ -9,23 +9,27 @@ router.use('/:id/posts', validateUserId, postRouter);
 
 //users routes
 router.get('/', (req, res) => {
-  res.send('Users');
+  userDb.get()
+    .then(users => res.status(200).json(users))
+    .catch(err => res.status(500).json({ errorMessage: 'There was a problem getting users.', error: err }));
 });
 
 router.get('/:id', validateUserId, (req, res) => {
-  res.send(`User id ${req.user}`);
+  res.send(req.user);
 });
 
-router.post('/', (req, res) => {
-
+router.post('/', validateUser, (req, res) => {
+  userDb.insert(req.newUser)
+    .then(user => res.status(201).json(user))
+    .catch(err => res.status(500).json({ errorMessage: 'There was a problem creating a user.', error: err }));
 });
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', validateUserId, (req, res) => {
   // do your magic!
 });
 
-router.put('/:id', (req, res) => {
-  // do your magic!
+router.put('/:id', validateUserId, (req, res) => {
+
 });
 
 //posts routes
@@ -38,19 +42,27 @@ router.get('/:id/posts', (req, res) => {
 function validateUserId(req, res, next) {
   const userId = req.params.id;
   userDb.getById(userId)
-    .then(userExists => {
-      if (userExists) {
-        req.user = userId;
+    .then(user => {
+      if (user) {
+        req.user = user;
         next();
       } else {
         res.status(400).json({ message: 'invalid user id' });
       }
     })
-    .catch(err => res.status(500).json({ error: 'There was a server error.' }));
+    .catch(err => res.status(500).json({ errorMessage: 'There was a problem getting that user.', error: err }));
 }
 
 function validateUser(req, res, next) {
-  // do your magic!
+  const newUser = req.body;
+  if (Object.entries(newUser).length === 0) {
+    res.status(400).json({ message: 'missing post data.' });
+  } else if (!newUser.hasOwnProperty('name')) {
+    res.status(400).json({ message: 'missing required name field.' });
+  } else {
+    req.newUser = newUser;
+    next();
+  }
 }
 
 function validatePost(req, res, next) {
