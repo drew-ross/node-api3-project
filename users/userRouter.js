@@ -26,18 +26,18 @@ router.post('/', validateUser, (req, res) => {
 
 router.delete('/:id', validateUserId, (req, res) => {
   userDb.remove(req.params.id)
-  .then(success => res.status(200).json(req.user))
-  .catch(err => res.status(500).json({ errorMessage: 'There was a problem deleting a user.', error: err }));
+    .then(success => res.status(200).json(req.user))
+    .catch(err => res.status(500).json({ errorMessage: 'There was a problem deleting a user.', error: err }));
 });
 
-router.put('/:id', validateUserId, (req, res) => {
-
+router.put('/:id', validateUserId, validateUser, (req, res) => {
+  userDb.update(req.user.id, req.newUser)
+    .then(success => res.status(200).json({ id: req.user.id, name: req.newUser.name }))
+    .catch(err => res.status(500).json({ errorMessage: 'There was a problem updating the user.', error: err }));
 });
 
 //posts routes
-router.get('/:id/posts', (req, res) => {
-  res.send(`Posts of User id ${req.params.id}`);
-});
+
 
 //custom middleware
 
