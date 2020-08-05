@@ -1,25 +1,25 @@
 const express = require('express');
 
+const postRouter = require('../posts/postRouter');
+
 const router = express.Router();
 
-router.post('/', (req, res) => {
-  // do your magic!
-});
+router.use('/:id/posts', (req, res, next) => {
+  req.userId = req.params.id;
+  next();
+}, postRouter);
 
-router.post('/:id/posts', (req, res) => {
-  // do your magic!
-});
-
+//users routes
 router.get('/', (req, res) => {
-  // do your magic!
+  res.send('Users');
 });
 
 router.get('/:id', (req, res) => {
-  // do your magic!
+  res.send(`User id ${req.params.id}`);
 });
 
-router.get('/:id/posts', (req, res) => {
-  // do your magic!
+router.post('/', (req, res) => {
+
 });
 
 router.delete('/:id', (req, res) => {
@@ -28,6 +28,11 @@ router.delete('/:id', (req, res) => {
 
 router.put('/:id', (req, res) => {
   // do your magic!
+});
+
+//posts routes
+router.get('/:id/posts', (req, res) => {
+  res.send(`Posts of User id ${req.params.id}`);
 });
 
 //custom middleware
@@ -43,5 +48,6 @@ function validateUser(req, res, next) {
 function validatePost(req, res, next) {
   // do your magic!
 }
+
 
 module.exports = router;

@@ -2,11 +2,11 @@ const express = require('express');
 
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  // do your magic!
+router.get('/:id', (req, res) => {
+  res.send(`User id ${req.userId} Post id ${req.params.id}`);
 });
 
-router.get('/:id', (req, res) => {
+router.post('/', (req, res) => {
   // do your magic!
 });
 
